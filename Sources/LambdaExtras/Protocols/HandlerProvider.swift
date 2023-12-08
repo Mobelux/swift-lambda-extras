@@ -11,7 +11,8 @@ import Foundation
 
 /// A class of types that provide an `EventHandler` to implement the core logic of a `SimpleLambdaHandler`
 /// and translate its input and output to those of a particular AWS Lambda.
-public protocol HandlerProvider: SimpleLambdaHandler {
+public protocol HandlerProvider<Event, Output>: SimpleLambdaHandler {
+    /// The event handler responsible for implementing the provider's logic.
     associatedtype Underlying: EventHandler
 
     /// Returns the event handler responsible for implementing the function's core logic.
@@ -35,7 +36,7 @@ public protocol HandlerProvider: SimpleLambdaHandler {
     /// Encodes an error to the Lambda output.
     /// - Parameter error: The error to encode.
     /// - Returns: The encoded output for the Lambda.
-    func encode(error: Error) throws -> Output
+    func handle(error: Error) throws -> Output
 }
 
 // MARK: - HandlerProvider+APIGateway

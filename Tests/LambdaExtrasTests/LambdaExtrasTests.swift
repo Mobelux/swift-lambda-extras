@@ -5,8 +5,8 @@
 //  Created by Mathew Gacy on 12/8/23.
 //
 
-import XCTest
 @testable import LambdaExtras
+import XCTest
 
 final class LambdaExtrasTests: XCTestCase {
     func testExample() throws {
