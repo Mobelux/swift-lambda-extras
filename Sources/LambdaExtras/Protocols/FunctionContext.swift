@@ -27,7 +27,7 @@ public extension FunctionContext {
     /// - Parameter environmentVariable: The environment variable whose value should be returned.
     func value(for environmentVariable: EnvironmentVariable) throws -> String {
         guard let value = ProcessInfo.processInfo.environment[environmentVariable.rawValue] else {
-            throw HandlerError.envError
+            throw HandlerError.envError(environmentVariable.rawValue)
         }
 
         return value
