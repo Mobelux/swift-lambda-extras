@@ -45,6 +45,30 @@ public protocol HandlerProvider<Event, Output>: SimpleLambdaHandler {
     func handle(error: Error) throws -> Output
 }
 
+// MARK: - Default Implementations
+
+public extension HandlerProvider {
+    func handle(_ event: Event, context: LambdaContext) async throws -> Output {
+        context.logger.info("RECEIVED: \(event)")
+
+        do {
+            let underlyingEvent = try decode(event: event)
+            let handler = try makeHandler(for: context)
+            let output = try await handler.handle(underlyingEvent)
+            context.logger.info("FINISHED: \(output)")
+
+            return try encode(output: output)
+        } catch {
+            context.logger.error("UNDERLYING ERROR: \(error.localizedDescription)")
+            return try handle(error: error)
+        }
+    }
+
+    func handle(error: Error) throws -> Output {
+        throw error
+    }
+}
+
 // MARK: - HandlerProvider+APIGateway
 
 public extension HandlerProvider where Event == APIGatewayV2Request, Output == APIGatewayV2Response {
@@ -58,24 +82,5 @@ public extension HandlerProvider where Event == APIGatewayV2Request, Output == A
 
     func encode(output: Underlying.Output) -> APIGatewayV2Response {
         APIGatewayV2Response(statusCode: .ok)
-    }
-
-    func handle(_ event: APIGatewayV2Request, context: LambdaContext) async throws -> APIGatewayV2Response {
-        context.logger.info("RECEIVED: \(event)")
-
-        do {
-            let underlyingEvent = try decode(event: event)
-            let handler = try makeHandler(for: context)
-            let output = try await handler.handle(underlyingEvent)
-            context.logger.info("FINISHED: \(output)")
-
-            return try encode(output: output)
-        } catch {
-            return try handle(error: error)
-        }
-    }
-
-    func handle(error: Error) throws -> APIGatewayV2Response {
-        throw error
     }
 }
