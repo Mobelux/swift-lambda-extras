@@ -5,7 +5,7 @@
 //  Created by Mathew Gacy on 12/8/23.
 //
 
-@preconcurrency import Dispatch
+import Dispatch
 import Foundation
 import Logging
 
