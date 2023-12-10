@@ -33,7 +33,13 @@ public protocol HandlerProvider<Event, Output>: SimpleLambdaHandler {
     /// - Returns: The encoded output for the Lambda.
     func encode(output: Underlying.Output) throws -> Output
 
-    /// Encodes an error to the Lambda output.
+    /// Handles errors thrown by the ``Underlying`` event handler by encoding them to the expected
+    /// ``Output``.
+    ///
+    /// Use this method to provide better-structured information about the error than is possible
+    /// when throwing an error from a `SimpleLambdaHandler.handle(_:context:)`. If such information
+    /// is not required, the given error can simply be thrown.
+    ///
     /// - Parameter error: The error to encode.
     /// - Returns: The encoded output for the Lambda.
     func handle(error: Error) throws -> Output
