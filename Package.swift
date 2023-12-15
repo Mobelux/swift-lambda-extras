@@ -8,7 +8,9 @@ let package = Package(
     platforms: [.macOS(.v12)],
     products: [
         .library(name: "LambdaExtras", targets: ["LambdaExtras"]),
+        // Core library; does not link AWS products.
         .library(name: "LambdaExtrasCore", targets: ["LambdaExtrasCore"]),
+        // Testing helpers
         .library(name: "LambdaMocks", targets: ["LambdaMocks"])
     ],
     dependencies: [
