@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import LambdaExtrasCore
 import Logging
 import NIOCore
 

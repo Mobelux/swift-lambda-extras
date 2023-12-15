@@ -8,17 +8,35 @@ let package = Package(
     platforms: [.macOS(.v12)],
     products: [
         .library(name: "LambdaExtras", targets: ["LambdaExtras"]),
+        .library(name: "LambdaExtrasCore", targets: ["LambdaExtrasCore"]),
+        .library(name: "LambdaMocks", targets: ["LambdaMocks"])
     ],
     dependencies: [
+        .package(url: "https://github.com/apple/swift-log.git", .upToNextMajor(from: "1.4.2")),
+        .package(url: "https://github.com/apple/swift-nio.git", .upToNextMajor(from: "2.43.1")),
         .package(url: "https://github.com/swift-server/swift-aws-lambda-events", branch: "main"),
         .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime", branch: "main")
     ],
     targets: [
         .target(
+            name: "LambdaExtrasCore",
+            dependencies: [
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "NIOCore", package: "swift-nio")
+            ]
+        ),
+        .target(
             name: "LambdaExtras",
             dependencies: [
+                "LambdaExtrasCore",
                 .product(name: "AWSLambdaRuntime",package: "swift-aws-lambda-runtime"),
                 .product(name: "AWSLambdaEvents", package: "swift-aws-lambda-events")
+            ]
+        ),
+        .target(
+            name: "LambdaMocks",
+            dependencies: [
+                "LambdaExtrasCore"
             ]
         ),
         .testTarget(
@@ -26,6 +44,6 @@ let package = Package(
             dependencies: [
                 "LambdaExtras"
             ]
-        ),
+        )
     ]
 )

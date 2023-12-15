@@ -2,51 +2,45 @@
 //  Extensions.swift
 //  LambdaExtras
 //
-//  Created by Mathew Gacy on 12/8/23.
+//  Created by Mathew Gacy on 12/15/23.
 //
 
+import AWSLambdaRuntime
+import AWSLambdaRuntimeCore
 import Foundation
+import LambdaExtrasCore
+import NIOCore
 
-public extension Collection {
-    /// A Boolean value indicating whether the collection contains elements.
-    var isNotEmpty: Bool {
-        !isEmpty
-    }
-}
-
-extension DecodingError.Context {
-    var codingPathStringRepresentation: String {
-        codingPath
-            .map(\.stringValue)
-            .joined(separator: ".")
-    }
-}
-
-public extension DecodingError {
-    /// Returns a string with a human readable reason for json decoding failure.
-    var userDescription: String {
-        switch self {
-        case .dataCorrupted(let context):
-            return context.debugDescription
-        case let .keyNotFound(key, context):
-            return "The JSON attribute `\(context.codingPathStringRepresentation).\(key.stringValue)` is missing."
-        case let .typeMismatch(type, context):
-            return "The JSON attribute `\(context.codingPathStringRepresentation)` was not expected type \(type)."
-        case let .valueNotFound(_, context):
-            return "The JSON attribute `\(context.codingPathStringRepresentation)` is null."
-        @unknown default:
-            return localizedDescription
-        }
-    }
-}
-
-public extension JSONDecoder {
-    /// Returns a value of the type you specify, decoded from a JSON object.
+public extension EnvironmentValueProvider where EnvironmentVariable == String {
+    /// Returns the value of the given environment variable.
     ///
-    /// - Parameters:
-    ///   - type: The type of the value to decode from the supplied JSON object.
-    ///   - jsonString: A string containing the JSON object to decode.
-    func decode<T: Decodable>(_ type: T.Type, from jsonString: String) throws -> T {
-        try decode(type, from: Data(jsonString.utf8))
+    /// - Parameter environmentVariable: The environment variable whose value should be returned.
+    func value(for environmentVariable: EnvironmentVariable) throws -> String {
+        guard let value = Lambda.env(environmentVariable) else {
+            throw HandlerError.envError(environmentVariable)
+        }
+
+        return value
+    }
+}
+
+public extension EnvironmentValueProvider where EnvironmentVariable: RawRepresentable<String> {
+    /// Returns the value of the given environment variable.
+    ///
+    /// - Parameter environmentVariable: The environment variable whose value should be returned.
+    func value(for environmentVariable: EnvironmentVariable) throws -> String {
+        guard let value = Lambda.env(environmentVariable.rawValue) else {
+            throw HandlerError.envError(environmentVariable.rawValue)
+        }
+
+        return value
+    }
+}
+
+extension LambdaContext: RuntimeContext {}
+
+extension LambdaInitializationContext: InitializationContext {
+    public func handleShutdown(_ handler: @escaping (EventLoop) -> EventLoopFuture<Void>) {
+        terminator.register(name: "shutdown", handler: handler)
     }
 }

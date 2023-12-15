@@ -8,6 +8,7 @@
 import AWSLambdaEvents
 import AWSLambdaRuntime
 import Foundation
+import LambdaExtrasCore
 
 /// A coder for APIGateway events.
 public struct APIGatewayCoder<E, O>: LambdaCoding where E: Codable, E: Sendable, O: Sendable {

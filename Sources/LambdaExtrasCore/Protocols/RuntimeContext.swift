@@ -8,7 +8,6 @@
 import Foundation
 import Logging
 import NIOCore
-import struct AWSLambdaRuntime.LambdaContext
 
 /// A class of types providing information about the general runtime context.
 public protocol RuntimeContext: Sendable {
@@ -42,5 +41,3 @@ public protocol RuntimeContext: Sendable {
     /// `ByteBufferAllocator` to allocate `ByteBuffer`.
     var allocator: ByteBufferAllocator { get }
 }
-
-extension LambdaContext: RuntimeContext {}

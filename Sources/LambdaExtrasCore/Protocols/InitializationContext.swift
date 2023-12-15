@@ -5,7 +5,6 @@
 //  Created by Mathew Gacy on 12/10/23.
 //
 
-import AWSLambdaRuntime
 import Foundation
 import Logging
 import NIOCore
@@ -30,10 +29,4 @@ public protocol InitializationContext: Sendable {
     ///
     /// - Parameter handler: A closure to execute when the lambda shuts down.
     func handleShutdown(_ handler: @escaping (EventLoop) -> EventLoopFuture<Void>)
-}
-
-extension LambdaInitializationContext: InitializationContext {
-    public func handleShutdown(_ handler: @escaping (EventLoop) -> EventLoopFuture<Void>) {
-        terminator.register(name: "shutdown", handler: handler)
-    }
 }
