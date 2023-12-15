@@ -8,7 +8,7 @@
 import Foundation
 
 /// An error that occurs during lambda handler execution.
-public enum HandlerError: Error, LocalizedError {
+public enum HandlerError: Error, Equatable, LocalizedError {
     /// The request is missing a body.
     case emptyBody
     /// The lambda context is missing an expected environment variable.
@@ -16,6 +16,7 @@ public enum HandlerError: Error, LocalizedError {
     /// A custom error.
     case custom(_ message: String?)
 
+    /// Retrieve the description for this error.
     public var errorDescription: String? {
         switch self {
         case .emptyBody:
@@ -23,7 +24,7 @@ public enum HandlerError: Error, LocalizedError {
         case .envError(let variable):
             return "The environment does not contain the expected variable `\(variable)`."
         case .custom(let message):
-            return message
+            return message ?? "Unknown error."
         }
     }
 }
