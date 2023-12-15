@@ -5,9 +5,10 @@
 //  Created by Mathew Gacy on 12/8/23.
 //
 
-import struct AWSLambdaRuntime.LambdaContext
 import Foundation
 import Logging
+import NIOCore
+import struct AWSLambdaRuntime.LambdaContext
 
 /// A class of types providing information about the general runtime context.
 public protocol RuntimeContext: Sendable {
@@ -31,6 +32,15 @@ public protocol RuntimeContext: Sendable {
 
     /// `Logger` to log with.
     var logger: Logger { get }
+
+    /// The `EventLoop` the Lambda is executed on. Use this to schedule work with.
+    ///
+    /// - note: The `EventLoop` is shared with the Lambda runtime engine and should be handled with extra care.
+    ///         Most importantly the `EventLoop` must never be blocked.
+    var eventLoop: EventLoop { get }
+
+    /// `ByteBufferAllocator` to allocate `ByteBuffer`.
+    var allocator: ByteBufferAllocator { get }
 }
 
 extension LambdaContext: RuntimeContext {}

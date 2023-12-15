@@ -8,6 +8,7 @@
 import Dispatch
 import Foundation
 import Logging
+import NIOCore
 
 /// A mock function context for testing.
 public struct MockContext<E: RawRepresentable>: FunctionContext where E.RawValue == String {
@@ -18,6 +19,8 @@ public struct MockContext<E: RawRepresentable>: FunctionContext where E.RawValue
     public var cognitoIdentity: String?
     public var clientContext: String?
     public var logger: Logger
+    public var eventLoop: EventLoop
+    public var allocator: ByteBufferAllocator
 
     /// A closure returning the value of the given environment variable.
     public var environmentValueProvider: @Sendable (E) throws -> String
@@ -32,6 +35,8 @@ public struct MockContext<E: RawRepresentable>: FunctionContext where E.RawValue
     ///   - cognitoIdentity: The Cognito identity provider ID.
     ///   - clientContext: Data about the client application and device.
     ///   - logger: The logger.
+    ///   - eventLoop: The event loop.
+    ///   - allocator: The byte buffer allocator.
     ///   - environmentValueProvider: A closure returning the value of the given environment
     ///   variable.
     public init(
@@ -42,6 +47,8 @@ public struct MockContext<E: RawRepresentable>: FunctionContext where E.RawValue
         cognitoIdentity: String? = nil,
         clientContext: String? = nil,
         logger: Logger,
+        eventLoop: EventLoop,
+        allocator: ByteBufferAllocator,
         environmentValueProvider: @escaping @Sendable (E) throws -> String
     ) {
         self.requestID = requestID
@@ -51,6 +58,8 @@ public struct MockContext<E: RawRepresentable>: FunctionContext where E.RawValue
         self.cognitoIdentity = cognitoIdentity
         self.clientContext = clientContext
         self.logger = logger
+        self.eventLoop = eventLoop
+        self.allocator = allocator
         self.environmentValueProvider = environmentValueProvider
     }
 
@@ -67,6 +76,8 @@ public extension MockContext {
     ///   - requestID: The request ID.
     ///   - traceID: The tracing header.
     ///   - invokedFunctionARN: The ARN of the Lambda function.
+    ///   - eventLoop: The event loop.
+    ///   - allocator: The byte buffer allocator.
     ///   - environmentValueProvider: A closure returning the value of the given environment
     ///   variable.
     init(
@@ -74,9 +85,10 @@ public extension MockContext {
         requestID: String = UUID().uuidString,
         traceID: String = "abc123",
         invokedFunctionARN: String = "aws:arn:",
+        eventLoop: EventLoop,
+        allocator: ByteBufferAllocator = .init(),
         environmentValueProvider: @escaping @Sendable (E) throws -> String
     ) {
-        self.environmentValueProvider = environmentValueProvider
         self.requestID = requestID
         self.traceID = traceID
         self.invokedFunctionARN = invokedFunctionARN
@@ -85,5 +97,8 @@ public extension MockContext {
             label: "mock-logger",
             factory: { _ in StreamLogHandler.standardOutput(label: "mock-logger") }
         )
+        self.eventLoop = eventLoop
+        self.allocator = allocator
+        self.environmentValueProvider = environmentValueProvider
     }
 }
