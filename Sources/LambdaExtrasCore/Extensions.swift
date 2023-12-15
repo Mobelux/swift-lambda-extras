@@ -50,3 +50,21 @@ public extension JSONDecoder {
         try decode(type, from: Data(jsonString.utf8))
     }
 }
+
+public extension Optional {
+    /// Convienence method to `throw` if an optional type has a `nil` value.
+    ///
+    /// - Parameter error: The error to throw.
+    /// - Returns: The unwrapped value.
+    func unwrap(or error: @autoclosure () -> LocalizedError) throws -> Wrapped {
+        switch self {
+        case .some(let wrapped): return wrapped
+        case .none: throw error()
+        }
+    }
+}
+
+extension String: LocalizedError {
+    public var errorDescription: String? { self }
+    public var failureReason: String? { self }
+}
