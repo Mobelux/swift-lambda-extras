@@ -11,7 +11,7 @@ import Logging
 import NIOCore
 
 /// A mock function context for testing.
-public struct MockContext<E: RawRepresentable>: FunctionContext where E.RawValue == String {
+public struct MockContext<E>: RuntimeContext, EnvironmentValueProvider {
     public var requestID: String
     public var traceID: String
     public var invokedFunctionARN: String
