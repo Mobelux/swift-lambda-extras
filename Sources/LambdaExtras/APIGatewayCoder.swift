@@ -77,7 +77,7 @@ private extension APIGatewayCoder {
     /// - Returns: The response body.
     private func errorResponseBody(_ message: String) -> String {
         """
-        {"reason": "\(message)"
+        {"reason": "\(message)"}
         """
     }
 }
