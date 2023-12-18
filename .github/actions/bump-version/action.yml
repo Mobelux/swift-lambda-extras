@@ -1,0 +1,24 @@
+name: Bump Version
+description: Bumps a given version number.
+
+inputs:
+  current-version:
+    description: The current semantic version number.
+    required: true
+  release-type:
+    description: Type of release. Must be one of `patch` | `minor` | `major`.
+    required: true
+
+outputs:
+  version:
+    description: The new version number.
+    value: ${{ steps.bump.outputs.new-version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Bump Version
+      id: bump
+      shell: bash
+      run: |
+        echo "new-version=$( ${{ github.action_path }}/semver.sh bump ${{ inputs.release-type }} ${{ inputs.current-version }} )" >> $GITHUB_OUTPUT
