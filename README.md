@@ -82,3 +82,46 @@ public struct MultiplyHandler {
 }
 ```
 
+### Lambda
+
+Create an executable target and declare `EnvironmentValueProvider` conformances for `LambdaInitializationContext` and `LambdaContext`:
+
+```swift
+extension LambdaInitializationContext: EnvironmentValueProvider {
+    public typealias EnvironmentVariable = Environment
+}
+
+extension LambdaContext: EnvironmentValueProvider {
+    public typealias EnvironmentVariable = Environment
+}
+```
+
+and implement a `LambdaHandler` with a `LambdaCoding` type like `APIGatewayCoder` that uses the handler created above:
+
+```swift
+@main
+struct MultiplyLambda: LambdaHandler {
+    let coder: APIGatewayCoder<Multiplicand, Int>
+    let handler: MultiplyHandler
+
+    init(context: LambdaInitializationContext) async throws {
+        self.coder = APIGatewayCoder()
+        self.handler = try await MultiplyHandler(context: context)
+    }
+
+    func handle(_ event: APIGatewayV2Request, context: LambdaContext) async throws -> APIGatewayV2Response {
+        context.logger.info("RECEIVED: \(event)")
+        do {
+            let subscription = try await coder.decode(event: event)
+
+            let output = try await handler.handle(subscription, context: context)
+            context.logger.info("FINISHED: \(output)")
+
+            return try coder.encode(output: output)
+        } catch {
+            context.logger.error("UNDERLYING ERROR: \(error.localizedDescription)")
+            return try coder.encode(error: error)
+        }
+    }
+}
+```
