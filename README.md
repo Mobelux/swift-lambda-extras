@@ -28,3 +28,57 @@ Where `<product>` is one of the following:
 - `LambdaExtras`
 - `LambdaMocks`
 
+## ⚙️ Usage
+
+This package is intended to support the creation of lambdas composed of 2 parts:
+
+- a generic target with a handler implementing the core logic without AWS dependencies
+- an executable target using that generic one
+
+### Handler
+
+Create a target without AWS dependencies like `AWSLambdaRuntime` or  `AWSLambdaEvents` to implement the the lambda's core logic. Add a type to represent all environment variables that will be used in the lambda:
+
+```swift
+public enum Environment: String {
+    case multiplier = "MULTIPLIER"
+    ...
+}
+```
+
+as well as a model for the handler's input and optionally its output:
+
+```swift
+public struct Multiplicand: Codable {
+    public let value: Int
+
+    public init(value: Int) {
+        self.value = value
+    }
+}
+```
+
+and a handler to implement the core logic of the lambda:
+
+```swift
+public struct MultiplyHandler {
+    public init<C>(
+        context: C
+    ) async throws where C: InitializationContext, C: EnvironmentValueProvider<Environment> {
+        // create any dependencies
+
+        context.handleShutdown { eventLoop in
+            // shut dependencies down ...
+        }
+    }
+
+    public func handle<C>(
+        _ event: Multiplicand,
+        context: C
+    ) async throws -> Int where C: RuntimeContext, C: EnvironmentValueProvider<Environment> {
+        let multiplier = try context.value(for: .multiplier)
+        return event.value * multiplier
+    }
+}
+```
+
