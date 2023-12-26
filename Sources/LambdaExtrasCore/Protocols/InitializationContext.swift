@@ -23,8 +23,6 @@ public protocol InitializationContext: Sendable {
     /// `ByteBufferAllocator` to allocate `ByteBuffer`.
     var allocator: ByteBufferAllocator { get }
 
-    // TODO: Is there any point to allowing a name to be passed?
-
     /// Register a closure to be performed on lambda shutdown.
     ///
     /// - Parameter handler: A closure to execute when the lambda shuts down.
