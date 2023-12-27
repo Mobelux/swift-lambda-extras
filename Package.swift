@@ -17,41 +17,9 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-log.git", .upToNextMajor(from: "1.4.2")),
         .package(url: "https://github.com/apple/swift-nio.git", .upToNextMajor(from: "2.43.1")),
         .package(url: "https://github.com/swift-server/swift-aws-lambda-events.git", branch: "main"),
-        .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", branch: "main"),
-        // Plugins
-        .package(url: "https://github.com/realm/SwiftLint.git", exact: "0.54.0")
+        .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", branch: "main")
     ],
     targets: [
-        .target(
-            name: "LambdaExtrasCore",
-            dependencies: [
-                .product(name: "Logging", package: "swift-log"),
-                .product(name: "NIOCore", package: "swift-nio")
-            ],
-            plugins: [
-                .plugin(name: "SwiftLintPlugin", package: "SwiftLint")
-            ]
-        ),
-        .target(
-            name: "LambdaExtras",
-            dependencies: [
-                "LambdaExtrasCore",
-                .product(name: "AWSLambdaRuntime",package: "swift-aws-lambda-runtime"),
-                .product(name: "AWSLambdaEvents", package: "swift-aws-lambda-events")
-            ],
-            plugins: [
-                .plugin(name: "SwiftLintPlugin", package: "SwiftLint")
-            ]
-        ),
-        .target(
-            name: "LambdaMocks",
-            dependencies: [
-                "LambdaExtrasCore"
-            ],
-            plugins: [
-                .plugin(name: "SwiftLintPlugin", package: "SwiftLint")
-            ]
-        ),
         .testTarget(
             name: "LambdaExtrasTests",
             dependencies: [
@@ -60,3 +28,36 @@ let package = Package(
         )
     ]
 )
+
+let genericTargets: [Target] = [
+    .target(
+        name: "LambdaExtrasCore",
+        dependencies: [
+            .product(name: "Logging", package: "swift-log"),
+            .product(name: "NIOCore", package: "swift-nio")
+        ]
+    ),
+    .target(
+        name: "LambdaExtras",
+        dependencies: [
+            "LambdaExtrasCore",
+            .product(name: "AWSLambdaRuntime",package: "swift-aws-lambda-runtime"),
+            .product(name: "AWSLambdaEvents", package: "swift-aws-lambda-events")
+        ]
+    ),
+    .target(
+        name: "LambdaMocks",
+        dependencies: [
+            "LambdaExtrasCore"
+        ]
+    )
+]
+
+#if os(macOS)
+package.dependencies.append(.package(url: "https://github.com/realm/SwiftLint.git", exact: "0.54.0"))
+for target in genericTargets {
+    target.plugins = [.plugin(name: "SwiftLintPlugin", package: "SwiftLint")]
+}
+#endif
+
+package.targets.append(contentsOf: genericTargets)
