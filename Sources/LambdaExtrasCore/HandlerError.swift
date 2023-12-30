@@ -14,7 +14,7 @@ public enum HandlerError: Error, Equatable, LocalizedError {
     /// The lambda context is missing an expected environment variable.
     case envError(String)
     /// A custom error.
-    case custom(_ message: String?)
+    case custom(_ message: String)
 
     /// Retrieve the description for this error.
     public var errorDescription: String? {
@@ -24,7 +24,7 @@ public enum HandlerError: Error, Equatable, LocalizedError {
         case .envError(let variable):
             return "The environment does not contain the expected variable `\(variable)`."
         case .custom(let message):
-            return message ?? "Unknown error."
+            return message
         }
     }
 }
