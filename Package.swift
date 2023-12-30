@@ -18,18 +18,10 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-nio.git", .upToNextMajor(from: "2.43.1")),
         .package(url: "https://github.com/swift-server/swift-aws-lambda-events.git", branch: "main"),
         .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", branch: "main")
-    ],
-    targets: [
-        .testTarget(
-            name: "LambdaExtrasTests",
-            dependencies: [
-                "LambdaExtras"
-            ]
-        )
     ]
 )
 
-let genericTargets: [Target] = [
+let targets: [Target] = [
     .target(
         name: "LambdaExtrasCore",
         dependencies: [
@@ -50,14 +42,21 @@ let genericTargets: [Target] = [
         dependencies: [
             "LambdaExtrasCore"
         ]
+    ),
+    .testTarget(
+        name: "LambdaExtrasTests",
+        dependencies: [
+            "LambdaExtras",
+            "LambdaMocks"
+        ]
     )
 ]
 
 #if os(macOS)
 package.dependencies.append(.package(url: "https://github.com/realm/SwiftLint.git", exact: "0.54.0"))
-for target in genericTargets {
+for target in targets {
     target.plugins = [.plugin(name: "SwiftLintPlugin", package: "SwiftLint")]
 }
 #endif
 
-package.targets.append(contentsOf: genericTargets)
+package.targets = targets
