@@ -51,6 +51,21 @@ public extension JSONDecoder {
     }
 }
 
+public extension JSONSerialization {
+    /// Returns an escaped string for the given JSON object data.
+    ///
+    /// - Parameters:
+    ///   - jsonData: The data from which to generate the JSON string.
+    ///   - options: Options for creating the JSON data.
+    /// - Returns: An escaped string representation of the given object `jsonData`.
+    static func escapedString(with jsonData: Data, options: WritingOptions = []) throws -> String {
+        let jsonString = String(decoding: jsonData, as: UTF8.self)
+        let data = try data(withJSONObject: [jsonString], options: options)
+        let encodedString = String(decoding: data, as: UTF8.self)
+        return String(encodedString.dropLast().dropFirst())
+    }
+}
+
 public extension Optional {
     /// Convienence method to `throw` if an optional type has a `nil` value.
     ///
