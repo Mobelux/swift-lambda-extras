@@ -25,7 +25,7 @@ public protocol LambdaCoding<Event, Output, UnderlyingEvent, UnderlyingOutput> {
     ///
     /// - Parameter event: The event to encode.
     /// - Returns: An underlying event.
-    func decode(event: Event) async throws -> UnderlyingEvent
+    func decode(event: Event) throws -> UnderlyingEvent
 
     /// Encodes the given output to that of a lambda.
     ///
