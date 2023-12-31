@@ -94,7 +94,6 @@ public extension APIGatewayV2Request {
         parameters: [String: String]? = nil,
         pathParameters: [String: String]? = nil,
         isBase64Encoded: Bool = false,
-        // stageVariables: [String: String]? = nil,
         body: String? = nil
     ) throws -> Self {
         var rawQueryString = "".quoted()
