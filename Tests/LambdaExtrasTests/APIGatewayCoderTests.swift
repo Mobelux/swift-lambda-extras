@@ -51,9 +51,12 @@ extension APIGatewayCoderTests {
             "{\\"int\\":1,\\"string\\":\\"one\\"}"
             """
 
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+
         let sut = APIGatewayCoder<TestModel, TestModel>(
             responseBody: { model in
-                try JSONSerialization.escapedString(with: JSONEncoder().encode(model))
+                try JSONSerialization.escapedString(with: encoder.encode(model))
             }
         )
         let actual = try sut.encode(output: Mock.testModel)
