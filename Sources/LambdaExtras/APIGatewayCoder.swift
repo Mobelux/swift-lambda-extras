@@ -16,22 +16,28 @@ public struct APIGatewayCoder<E, O>: LambdaCoding where E: Codable, E: Sendable,
     let decoder: JSONDecoder
 
     /// A closure returning a response body from the given underlying output.
-    let responseBodyProvider: @Sendable (O) -> String?
+    let responseBodyProvider: @Sendable (O) throws -> String?
+
+    /// A closure returns a response body from the given error.
+    let errorBodyProvider: @Sendable (Error) throws -> String?
 
     /// Creates an instance.
     ///
     /// - Parameters:
     ///   - decoder: A JSON decoder.
     ///   - responseBody: A closure returning a response body from the given output.
+    ///   - errorBody: A closure returning a response body for the given error.
     public init(
         decoder: JSONDecoder = .init(),
-        responseBody: @escaping @Sendable (O) -> String? = { _ in nil }
+        responseBody: @escaping @Sendable (O) throws -> String? = { _ in nil },
+        errorBody: @escaping @Sendable (Error) throws -> String? = { $0.localizedDescription }
     ) {
         self.decoder = decoder
         self.responseBodyProvider = responseBody
+        self.errorBodyProvider = errorBody
     }
 
-    public func decode(event: APIGatewayV2Request) async throws -> E {
+    public func decode(event: APIGatewayV2Request) throws -> E {
         guard let body = event.body else {
             throw HandlerError.emptyBody
         }
@@ -42,42 +48,20 @@ public struct APIGatewayCoder<E, O>: LambdaCoding where E: Codable, E: Sendable,
     public func encode(output: O) throws -> APIGatewayV2Response {
         APIGatewayV2Response(
             statusCode: .ok,
-            body: responseBodyProvider(output))
+            body: try responseBodyProvider(output))
     }
 
     public func encode(error: Error) throws -> APIGatewayV2Response {
+        let statusCode: HTTPResponseStatus
         switch error {
         case HandlerError.emptyBody:
-            return APIGatewayV2Response(
-                statusCode: .badRequest,
-                body: errorResponseBody(error.localizedDescription))
-
-        case HandlerError.envError:
-            return APIGatewayV2Response(
-                statusCode: .internalServerError,
-                body: errorResponseBody(error.localizedDescription))
-
-        case HandlerError.custom(let message):
-            return APIGatewayV2Response(
-                statusCode: .internalServerError,
-                body: message.flatMap(errorResponseBody))
-
+            statusCode = .badRequest
         default:
-            return APIGatewayV2Response(
-                statusCode: .internalServerError,
-                body: errorResponseBody(error.localizedDescription))
+            statusCode = .internalServerError
         }
-    }
-}
 
-private extension APIGatewayCoder {
-    /// Returns a response body for the given error.
-    ///
-    /// - Parameter message: The error message
-    /// - Returns: The response body.
-    private func errorResponseBody(_ message: String) -> String {
-        """
-        {"reason": "\(message)"}
-        """
+        return APIGatewayV2Response(
+            statusCode: statusCode,
+            body: try errorBodyProvider(error.localizedDescription))
     }
 }
