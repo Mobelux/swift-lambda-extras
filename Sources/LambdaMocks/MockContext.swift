@@ -86,6 +86,7 @@ public extension MockContext {
         requestID: String = UUID().uuidString,
         traceID: String = "abc123",
         invokedFunctionARN: String = "aws:arn:",
+        logger: Logger = .mock,
         eventLoop: EventLoop,
         allocator: ByteBufferAllocator = .init(),
         environmentValueProvider: @escaping @Sendable (E) throws -> String
@@ -94,10 +95,7 @@ public extension MockContext {
         self.traceID = traceID
         self.invokedFunctionARN = invokedFunctionARN
         self.deadline = .now() + timeout
-        self.logger = Logger(
-            label: "mock-logger",
-            factory: { _ in StreamLogHandler.standardOutput(label: "mock-logger") }
-        )
+        self.logger = logger
         self.eventLoop = eventLoop
         self.allocator = allocator
         self.environmentValueProvider = environmentValueProvider

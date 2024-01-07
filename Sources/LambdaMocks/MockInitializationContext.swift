@@ -32,7 +32,7 @@ public class MockInitializationContext<E>: InitializationContext, EnvironmentVal
     ///   - environmentValueProvider: A closure returning the value of the given environment
     ///   variable.
     public init(
-        logger: Logger,
+        logger: Logger = .mock,
         eventLoop: EventLoop,
         allocator: ByteBufferAllocator,
         handlers: [(EventLoop) -> EventLoopFuture<Void>] = [],
