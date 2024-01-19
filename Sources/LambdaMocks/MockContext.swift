@@ -23,6 +23,11 @@ public struct MockContext<E>: RuntimeContext, EnvironmentValueProvider {
     public var eventLoop: EventLoop
     public var allocator: ByteBufferAllocator
 
+    /// A closure returning a `TimeAmount` from a given `DispatchWallTime`.
+    ///
+    /// This is used to return the remaining time until the context's ``deadline``.
+    public var remainingTimeProvider: @Sendable (DispatchWallTime) -> TimeAmount
+
     /// A closure returning the value of the given environment variable.
     public var environmentValueProvider: @Sendable (E) throws -> String
 
@@ -38,6 +43,7 @@ public struct MockContext<E>: RuntimeContext, EnvironmentValueProvider {
     ///   - logger: The logger.
     ///   - eventLoop: The event loop.
     ///   - allocator: The byte buffer allocator.
+    ///   - remainingTimeProvider: A closure returning a `TimeAmount` from a given `DispatchWallTime`.
     ///   - environmentValueProvider: A closure returning the value of the given environment
     ///   variable.
     public init(
@@ -50,6 +56,7 @@ public struct MockContext<E>: RuntimeContext, EnvironmentValueProvider {
         logger: Logger,
         eventLoop: EventLoop,
         allocator: ByteBufferAllocator,
+        remainingTimeProvider: @escaping @Sendable (DispatchWallTime) -> TimeAmount,
         environmentValueProvider: @escaping @Sendable (E) throws -> String
     ) {
         self.requestID = requestID
@@ -61,7 +68,12 @@ public struct MockContext<E>: RuntimeContext, EnvironmentValueProvider {
         self.logger = logger
         self.eventLoop = eventLoop
         self.allocator = allocator
+        self.remainingTimeProvider = remainingTimeProvider
         self.environmentValueProvider = environmentValueProvider
+    }
+
+    public func getRemainingTime() -> TimeAmount {
+        remainingTimeProvider(deadline)
     }
 
     public func value(for environmentVariable: E) throws -> String {
