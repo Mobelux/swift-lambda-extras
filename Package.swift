@@ -53,7 +53,7 @@ let targets: [Target] = [
 ]
 
 #if os(macOS)
-package.dependencies.append(.package(url: "https://github.com/realm/SwiftLint.git", exact: "0.54.0"))
+package.dependencies.append(.package(url: "https://github.com/realm/SwiftLint.git", from: "0.54.0"))
 for target in targets {
     target.plugins = [.plugin(name: "SwiftLintPlugin", package: "SwiftLint")]
 }
