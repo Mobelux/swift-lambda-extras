@@ -16,8 +16,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", .upToNextMajor(from: "1.4.2")),
         .package(url: "https://github.com/apple/swift-nio.git", .upToNextMajor(from: "2.43.1")),
-        .package(url: "https://github.com/swift-server/swift-aws-lambda-events.git", .upToNextMinor(from: "0.2.0")),
-        .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", branch: "main")
+        .package(url: "https://github.com/swift-server/swift-aws-lambda-events.git", .upToNextMajor(from: "0.2.0")),
+        .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", .upToNextMajor(from: "1.0.0-alpha.2"))
     ]
 )
 
