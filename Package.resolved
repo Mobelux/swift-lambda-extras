@@ -57,7 +57,7 @@
     {
       "identity" : "swift-aws-lambda-runtime",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swift-server/swift-aws-lambda-runtime",
+      "location" : "https://github.com/swift-server/swift-aws-lambda-runtime.git",
       "state" : {
         "revision" : "8d9f44b7838750b103ad2ad49055e8333d719e8a",
         "version" : "1.0.0-alpha.2"
