@@ -33,7 +33,7 @@ import NIO
 ///     }
 /// }
 /// ```
-public struct ContextProvider<E> {
+public struct ContextProvider<EnvironmentVariable> {
     /// The event loop group used to provide the contexts' event loops.
     public private(set) var eventLoopGroup: EventLoopGroup!
 
@@ -44,7 +44,7 @@ public struct ContextProvider<E> {
     public var logger: Logger
 
     /// A closure returning the value of the given environment variable.
-    public var environmentValueProvider: @Sendable (E) throws -> String
+    public var environmentValueProvider: @Sendable (EnvironmentVariable) throws -> String
 
     /// Creates an instance.
     ///
@@ -52,7 +52,7 @@ public struct ContextProvider<E> {
     /// environment variable.
     public init(
         logger: Logger = .mock,
-        environmentValueProvider: @escaping @Sendable (E) throws -> String
+        environmentValueProvider: @escaping @Sendable (EnvironmentVariable) throws -> String
     ) {
         self.logger = logger
         self.environmentValueProvider = environmentValueProvider
@@ -100,7 +100,7 @@ public struct ContextProvider<E> {
     }
 
     /// Returns the mocked initialization context.
-    public func makeInitializationContext() -> MockInitializationContext<E> {
+    public func makeInitializationContext() -> MockInitializationContext<EnvironmentVariable> {
         .init(
             logger: logger,
             eventLoop: eventLoop,
@@ -112,8 +112,8 @@ public struct ContextProvider<E> {
     ///
     /// - Parameter configuration: The configuration for the mocked runtime context.
     public func makeContext(
-        configuration: MockContext<E>.Configuration = .init()
-    ) -> MockContext<E> {
+        configuration: MockContext<EnvironmentVariable>.Configuration = .init()
+    ) -> MockContext<EnvironmentVariable> {
         .init(
             eventLoop: eventLoop,
             configuration: configuration,
