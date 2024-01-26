@@ -12,7 +12,7 @@ import Logging
 import NIOCore
 
 /// A mock function context for testing.
-public struct MockContext<E>: RuntimeContext, EnvironmentValueProvider {
+public struct MockContext<EnvironmentVariable>: RuntimeContext, EnvironmentValueProvider {
     public var requestID: String
     public var traceID: String
     public var invokedFunctionARN: String
@@ -29,7 +29,7 @@ public struct MockContext<E>: RuntimeContext, EnvironmentValueProvider {
     public var remainingTimeProvider: @Sendable (DispatchWallTime) -> TimeAmount
 
     /// A closure returning the value of the given environment variable.
-    public var environmentValueProvider: @Sendable (E) throws -> String
+    public var environmentValueProvider: @Sendable (EnvironmentVariable) throws -> String
 
     /// Creates a new instance.
     ///
@@ -57,7 +57,7 @@ public struct MockContext<E>: RuntimeContext, EnvironmentValueProvider {
         eventLoop: EventLoop,
         allocator: ByteBufferAllocator,
         remainingTimeProvider: @escaping @Sendable (DispatchWallTime) -> TimeAmount,
-        environmentValueProvider: @escaping @Sendable (E) throws -> String
+        environmentValueProvider: @escaping @Sendable (EnvironmentVariable) throws -> String
     ) {
         self.requestID = requestID
         self.traceID = traceID
@@ -76,7 +76,7 @@ public struct MockContext<E>: RuntimeContext, EnvironmentValueProvider {
         remainingTimeProvider(deadline)
     }
 
-    public func value(for environmentVariable: E) throws -> String {
+    public func value(for environmentVariable: EnvironmentVariable) throws -> String {
         try environmentValueProvider(environmentVariable)
     }
 }
@@ -154,7 +154,7 @@ public extension MockContext {
         logger: Logger = .mock,
         allocator: ByteBufferAllocator = .init(),
         remainingTimeProvider: @escaping @Sendable (DispatchWallTime) -> TimeAmount = Self.timeAmountUntil,
-        environmentValueProvider: @escaping @Sendable (E) throws -> String
+        environmentValueProvider: @escaping @Sendable (EnvironmentVariable) throws -> String
     ) {
         self.requestID = configuration.requestID
         self.traceID = configuration.traceID
