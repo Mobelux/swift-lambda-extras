@@ -40,4 +40,7 @@ public protocol RuntimeContext: Sendable {
 
     /// `ByteBufferAllocator` to allocate `ByteBuffer`.
     var allocator: ByteBufferAllocator { get }
+
+    /// Returns the time remaining before the deadline.
+    func getRemainingTime() -> TimeAmount
 }

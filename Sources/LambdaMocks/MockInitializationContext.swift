@@ -11,7 +11,7 @@ import Logging
 import NIOCore
 
 /// A mock initialization context for testing.
-public class MockInitializationContext<E>: InitializationContext, EnvironmentValueProvider, @unchecked Sendable {
+public class MockInitializationContext<EnvironmentVariable>: InitializationContext, EnvironmentValueProvider, @unchecked Sendable {
     public let logger: Logger
     public let eventLoop: EventLoop
     public let allocator: ByteBufferAllocator
@@ -20,7 +20,7 @@ public class MockInitializationContext<E>: InitializationContext, EnvironmentVal
     public var handlers: [(EventLoop) -> EventLoopFuture<Void>] = []
 
     /// A closure returning the value of the given environment variable.
-    private var environmentValueProvider: @Sendable (E) throws -> String
+    private var environmentValueProvider: @Sendable (EnvironmentVariable) throws -> String
 
     /// Creates a new instance.
     ///
@@ -32,11 +32,11 @@ public class MockInitializationContext<E>: InitializationContext, EnvironmentVal
     ///   - environmentValueProvider: A closure returning the value of the given environment
     ///   variable.
     public init(
-        logger: Logger,
+        logger: Logger = .mock,
         eventLoop: EventLoop,
         allocator: ByteBufferAllocator,
         handlers: [(EventLoop) -> EventLoopFuture<Void>] = [],
-        environmentValueProvider: @escaping @Sendable (E) throws -> String
+        environmentValueProvider: @escaping @Sendable (EnvironmentVariable) throws -> String
     ) {
         self.logger = logger
         self.eventLoop = eventLoop
@@ -49,7 +49,7 @@ public class MockInitializationContext<E>: InitializationContext, EnvironmentVal
         handlers.append(handler)
     }
 
-    public func value(for environmentVariable: E) throws -> String {
+    public func value(for environmentVariable: EnvironmentVariable) throws -> String {
         try environmentValueProvider(environmentVariable)
     }
 

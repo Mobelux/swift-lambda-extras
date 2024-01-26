@@ -40,7 +40,8 @@ let targets: [Target] = [
     .target(
         name: "LambdaMocks",
         dependencies: [
-            "LambdaExtrasCore"
+            "LambdaExtrasCore",
+            .product(name: "NIO", package: "swift-nio")
         ]
     ),
     .testTarget(

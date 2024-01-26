@@ -11,16 +11,29 @@ import Foundation
 import LambdaExtrasCore
 import NIOCore
 
+extension Lambda {
+    /// Returns the value of the environment variable with the given name.
+    ///
+    /// This method throws ``EventHandler.envError`` if a value for the given environment variable
+    /// name is not found.
+    ///
+    /// - Parameter name: The name of the environment variable to return.
+    /// - Returns: The value of the given environment variable.
+    static func env(name: String) throws -> String {
+        guard let value = env(name) else {
+            throw HandlerError.envError(name)
+        }
+
+        return value
+    }
+}
+
 public extension EnvironmentValueProvider where EnvironmentVariable == String {
     /// Returns the value of the given environment variable.
     ///
     /// - Parameter environmentVariable: The environment variable whose value should be returned.
     func value(for environmentVariable: EnvironmentVariable) throws -> String {
-        guard let value = Lambda.env(environmentVariable) else {
-            throw HandlerError.envError(environmentVariable)
-        }
-
-        return value
+        try Lambda.env(name: environmentVariable)
     }
 }
 
@@ -29,11 +42,7 @@ public extension EnvironmentValueProvider where EnvironmentVariable: RawRepresen
     ///
     /// - Parameter environmentVariable: The environment variable whose value should be returned.
     func value(for environmentVariable: EnvironmentVariable) throws -> String {
-        guard let value = Lambda.env(environmentVariable.rawValue) else {
-            throw HandlerError.envError(environmentVariable.rawValue)
-        }
-
-        return value
+        try Lambda.env(name: environmentVariable.rawValue)
     }
 }
 
