@@ -12,7 +12,7 @@ import LambdaExtrasCore
 import NIOCore
 
 extension Lambda {
-    /// Returns the value of the environment varialbe with the given name.
+    /// Returns the value of the environment variable with the given name.
     ///
     /// This method throws ``EventHandler.envError`` if a value for the given environment variable
     /// name is not found.
