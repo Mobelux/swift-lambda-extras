@@ -41,6 +41,7 @@ let targets: [Target] = [
         name: "LambdaMocks",
         dependencies: [
             "LambdaExtrasCore",
+            .product(name: "AWSLambdaEvents", package: "swift-aws-lambda-events"),
             .product(name: "NIO", package: "swift-nio")
         ]
     ),
