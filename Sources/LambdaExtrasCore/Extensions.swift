@@ -79,8 +79,7 @@ public extension Optional {
     }
 }
 
-extension String: @retroactive Error {}
-extension String: @retroactive LocalizedError {
+extension Swift.String: Foundation.LocalizedError {
     public var errorDescription: String? { self }
     public var failureReason: String? { self }
 }
