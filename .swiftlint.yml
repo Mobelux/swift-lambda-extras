@@ -25,6 +25,7 @@ opt_in_rules:
 
 disabled_rules:
   - multiple_closures_with_trailing_closure
+  - optional_data_string_conversion
   - vertical_parameter_alignment_on_call
   - void_return
 
