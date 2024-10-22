@@ -33,7 +33,7 @@ let targets: [Target] = [
         name: "LambdaExtras",
         dependencies: [
             "LambdaExtrasCore",
-            .product(name: "AWSLambdaRuntime",package: "swift-aws-lambda-runtime"),
+            .product(name: "AWSLambdaRuntime", package: "swift-aws-lambda-runtime"),
             .product(name: "AWSLambdaEvents", package: "swift-aws-lambda-events")
         ]
     ),
