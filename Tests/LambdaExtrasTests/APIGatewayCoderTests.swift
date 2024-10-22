@@ -9,6 +9,7 @@
 @testable import LambdaExtrasCore
 import AWSLambdaEvents
 import Foundation
+import HTTPTypes
 import LambdaMocks
 import XCTest
 
@@ -69,7 +70,7 @@ extension APIGatewayCoderTests {
 // MARK: - Encode Error
 extension APIGatewayCoderTests {
     func testEncodeEmptyBodyError() throws {
-        let expectedStatus: HTTPResponseStatus = .badRequest
+        let expectedStatus: HTTPResponse.Status = .badRequest
         let expectedBody = "The AWS event did not contain a body."
 
         let sut = APIGatewayCoder<TestModel, String>()
@@ -82,7 +83,7 @@ extension APIGatewayCoderTests {
     func testEncodeEnvironmentError() throws {
         let variableName = "MY_ENV_VARIABLE"
 
-        let expectedStatus = HTTPResponseStatus.internalServerError
+        let expectedStatus = HTTPResponse.Status.internalServerError
         let expectedBody = "The environment does not contain the expected variable `\(variableName)`."
 
         let sut = APIGatewayCoder<TestModel, String>()
@@ -93,7 +94,7 @@ extension APIGatewayCoderTests {
     }
 
     func testEncodeCustomError() throws {
-        let expectedStatus = HTTPResponseStatus.internalServerError
+        let expectedStatus = HTTPResponse.Status.internalServerError
         let expectedBody = "My error message"
 
         let sut = APIGatewayCoder<TestModel, String>()
@@ -108,7 +109,7 @@ extension APIGatewayCoderTests {
             var errorDescription: String? { "Oops, something went wrong" }
         }
 
-        let expectedStatus = HTTPResponseStatus.internalServerError
+        let expectedStatus = HTTPResponse.Status.internalServerError
         let expectedBody = "Oops, something went wrong"
 
         let sut = APIGatewayCoder<TestModel, String>()
@@ -119,7 +120,7 @@ extension APIGatewayCoderTests {
     }
 
     func testEncodeCustomizedError() throws {
-        let expectedStatus = HTTPResponseStatus.internalServerError
+        let expectedStatus = HTTPResponse.Status.internalServerError
         let expectedBody = """
             "{\\"reason\\":\\"Oops, something went wrong\\"}"
             """

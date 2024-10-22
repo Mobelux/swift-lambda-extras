@@ -8,6 +8,7 @@
 import AWSLambdaEvents
 import AWSLambdaRuntime
 import Foundation
+import HTTPTypes
 import LambdaExtrasCore
 
 /// A coder for APIGateway events.
@@ -52,16 +53,16 @@ public struct APIGatewayCoder<E, O>: LambdaCoding where E: Codable, E: Sendable,
     }
 
     public func encode(error: Error) throws -> APIGatewayV2Response {
-        let statusCode: HTTPResponseStatus
+        let status: HTTPResponse.Status
         switch error {
         case HandlerError.emptyBody:
-            statusCode = .badRequest
+            status = .badRequest
         default:
-            statusCode = .internalServerError
+            status = .internalServerError
         }
 
         return APIGatewayV2Response(
-            statusCode: statusCode,
+            statusCode: status,
             body: try errorBodyProvider(error.localizedDescription))
     }
 }
