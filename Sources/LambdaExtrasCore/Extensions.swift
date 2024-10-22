@@ -79,7 +79,7 @@ public extension Optional {
     }
 }
 
-extension String: LocalizedError {
+extension Swift.String: Foundation.LocalizedError {
     public var errorDescription: String? { self }
     public var failureReason: String? { self }
 }

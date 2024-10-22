@@ -8,7 +8,7 @@
 import Foundation
 
 /// An error that occurs during lambda handler execution.
-public enum HandlerError: Error, Equatable, LocalizedError {
+public enum HandlerError: Error, Equatable, LocalizedError, Sendable {
     /// The request is missing a body.
     case emptyBody
     /// The lambda context is missing an expected environment variable.

@@ -1,4 +1,4 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -14,10 +14,10 @@ let package = Package(
         .library(name: "LambdaMocks", targets: ["LambdaMocks"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-log.git", .upToNextMajor(from: "1.4.2")),
-        .package(url: "https://github.com/apple/swift-nio.git", .upToNextMajor(from: "2.43.1")),
-        .package(url: "https://github.com/swift-server/swift-aws-lambda-events.git", .upToNextMajor(from: "0.2.0")),
-        .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime.git", "1.0.0-alpha.1"..<"1.0.0-beta.999")
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.4.2"),
+        .package(url: "https://github.com/apple/swift-nio.git", from: "2.43.1"),
+        .package(url: "https://github.com/swift-server/swift-aws-lambda-events", from: "0.2.0"),
+        .package(url: "https://github.com/swift-server/swift-aws-lambda-runtime", from: "1.0.0-alpha.3")
     ]
 )
 
@@ -33,7 +33,7 @@ let targets: [Target] = [
         name: "LambdaExtras",
         dependencies: [
             "LambdaExtrasCore",
-            .product(name: "AWSLambdaRuntime",package: "swift-aws-lambda-runtime"),
+            .product(name: "AWSLambdaRuntime", package: "swift-aws-lambda-runtime"),
             .product(name: "AWSLambdaEvents", package: "swift-aws-lambda-events")
         ]
     ),
@@ -54,11 +54,8 @@ let targets: [Target] = [
     )
 ]
 
-#if os(macOS)
-package.dependencies.append(.package(url: "https://github.com/realm/SwiftLint.git", from: "0.54.0"))
 for target in targets {
-    target.plugins = [.plugin(name: "SwiftLintPlugin", package: "SwiftLint")]
+    target.swiftSettings = [.enableExperimentalFeature("StrictConcurrency")]
 }
-#endif
 
 package.targets = targets

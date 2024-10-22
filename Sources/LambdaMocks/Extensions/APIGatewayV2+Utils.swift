@@ -7,6 +7,7 @@
 
 import AWSLambdaEvents
 import Foundation
+import HTTPTypes
 
 // MARK: - Helpers
 
@@ -53,7 +54,7 @@ public extension APIGatewayV2Request {
     static func mock<T: Encodable>(
         _ bodyValue: T,
         encodedWith encoder: JSONEncoder = .init(),
-        method: HTTPMethod = .POST,
+        method: HTTPRequest.Method = .post,
         rawPath: String = "/endpoint",
         cookies: [String]? = nil,
         headers: [String: String] = [:],
@@ -87,7 +88,7 @@ public extension APIGatewayV2Request {
     /// - Returns: The mock request.
     static func mock(
         // swiftlint:disable:previous function_body_length
-        method: HTTPMethod = .POST,
+        method: HTTPRequest.Method = .post,
         rawPath: String = "/endpoint",
         cookies: [String]? = nil,
         headers: [String: String] = [:],
@@ -206,7 +207,7 @@ public extension APIGatewayV2Response {
     static func mock<T: Encodable>(
         _ bodyValue: T,
         encodedWith encoder: JSONEncoder = .init(),
-        statusCode: HTTPResponseStatus = .ok,
+        statusCode: HTTPResponse.Status = .ok,
         headers: [String: String]? = nil,
         isBase64Encoded: Bool = false,
         cookies: [String]? = nil
