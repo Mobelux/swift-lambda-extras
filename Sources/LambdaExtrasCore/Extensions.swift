@@ -79,7 +79,8 @@ public extension Optional {
     }
 }
 
-extension String: LocalizedError {
+extension String: @retroactive Error {}
+extension String: @retroactive LocalizedError {
     public var errorDescription: String? { self }
     public var failureReason: String? { self }
 }
