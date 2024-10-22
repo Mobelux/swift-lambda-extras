@@ -12,7 +12,7 @@ import HTTPTypes
 import LambdaExtrasCore
 
 /// A coder for APIGateway events.
-public struct APIGatewayCoder<E, O>: LambdaCoding where E: Codable, E: Sendable, O: Sendable {
+public struct APIGatewayCoder<E, O>: LambdaCoding, Sendable where E: Codable, E: Sendable, O: Sendable {
     /// A JSON decoder.
     let decoder: JSONDecoder
 
