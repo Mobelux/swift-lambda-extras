@@ -32,8 +32,8 @@ Where `<product>` is one of the following:
 
 This package is intended to support the creation of lambdas composed of 2 parts:
 
-- a generic target with a handler implementing the core logic without AWS dependencies
-- an executable target using that generic one
+- a regular target with a handler implementing the core logic without AWS dependencies
+- an executable target using that regular one
 
 ### Handler
 
