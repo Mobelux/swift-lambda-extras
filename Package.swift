@@ -1,4 +1,4 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -54,11 +54,8 @@ let targets: [Target] = [
     )
 ]
 
-#if os(macOS)
-package.dependencies.append(.package(url: "https://github.com/realm/SwiftLint.git", from: "0.54.0"))
 for target in targets {
-    target.plugins = [.plugin(name: "SwiftLintPlugin", package: "SwiftLint")]
+    target.swiftSettings = [.enableExperimentalFeature("StrictConcurrency")]
 }
-#endif
 
 package.targets = targets
